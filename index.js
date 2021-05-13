@@ -1,12 +1,18 @@
-const config = require('./lib/config')
-const user = require('./lib/user')
+const config = require('./lib/config');
+const users = require('./lib/user')
+const gun = config.gun;
+async function loginned(user) {
+    user.message = require('./lib/message')(user);
+    let rec = await users.findByName("rxy");
+    for (let i = 0; i < 80000; i++) {
+        console.log(i);
+        user.message.send(rec, i + "hello bro :D" + i);
+    }
+    console.log(rec.key);
+    console.log(await gun.get('chat').get(rec.key).once().then());
+}
 async function run() {
-
-    let usr = await user.auth('rxy', 'pwd').catch(() => { });
-    if (!usr) usr = await user.create('rxy', 'pwd');
-
-    usr.message = require('./lib/message')(usr);
-    console.log(usr);
-    console.log(await usr.message.get());
+    let usr = await users.asyncCreateOrAuth('rxy', 'pwd');
+    await loginned(usr);
 };
 run();
